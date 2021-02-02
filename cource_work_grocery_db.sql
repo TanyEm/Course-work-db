@@ -37,3 +37,25 @@ VALUES (1, 'Fruit')
 INSERT INTO grocery.product_category.category (id, name)
 VALUES (2, 'Vegetables')
 
+--products
+
+CREATE SCHEMA products_info
+GO
+
+CREATE TABLE products_info.products_warehouse
+(
+    id INT NOT NULL PRIMARY KEY,
+    product_name CHAR(70) NOT NULL,
+    category_id INT
+        CONSTRAINT products_warehouse_category_id_fk 
+        REFERENCES product_category.category,
+    price MONEY,
+    dimension CHAR(500),
+    quantity INT NOT NULL,
+)
+GO
+
+INSERT INTO grocery.products_info.products_warehouse (id, product_name, category_id, price, dimension, quantity)
+VALUES (1, 'Apple', 1, 65.00, 'kg', 20);
+INSERT INTO grocery.products_info.products_warehouse (id, product_name, category_id, price, dimension, quantity)
+VALUES (2, 'Tomato', 2, 37.00, 'kg', 40);
