@@ -59,3 +59,28 @@ INSERT INTO grocery.products_info.products_warehouse (id, product_name, category
 VALUES (1, 'Apple', 1, 65.00, 'kg', 20);
 INSERT INTO grocery.products_info.products_warehouse (id, product_name, category_id, price, dimension, quantity)
 VALUES (2, 'Tomato', 2, 37.00, 'kg', 40);
+
+--------- supplies
+
+CREATE SCHEMA suppliers_info
+GO
+
+CREATE TABLE suppliers_info.supplies
+(
+    id INT NOT NULL
+    CONSTRAINT supplies_pk PRIMARY KEY NONCLUSTERED,
+    provider CHAR(35) NOT NULL,
+    date DATETIME NOT NULL,
+    employ_id INT
+    CONSTRAINT supplies_employees_id_fk REFERENCES employees_info.employee --кто принимает
+)
+GO
+
+-----------------
+
+INSERT INTO grocery.suppliers_info.supplies (id, provider, date, employ_id)
+VALUES (1, 'Company 1', '2021-01-20 13:11:05.000', 1)
+INSERT INTO grocery.suppliers_info.supplies (id, provider, date, employ_id)
+VALUES (2, 'Company 1', '2021-01-15 13:20:00.000', 1)
+INSERT INTO grocery.suppliers_info.supplies (id, provider, date, employ_id)
+VALUES (3, 'Company 2', '2021-01-20 12:00:00.000', 1)
