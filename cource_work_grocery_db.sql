@@ -84,3 +84,43 @@ INSERT INTO grocery.suppliers_info.supplies (id, provider, date, employ_id)
 VALUES (2, 'Company 1', '2021-01-15 13:20:00.000', 1)
 INSERT INTO grocery.suppliers_info.supplies (id, provider, date, employ_id)
 VALUES (3, 'Company 2', '2021-01-20 12:00:00.000', 1)
+
+CREATE TABLE suppliers_info.supplied_grocery
+(
+    id INT NOT NULL 
+        CONSTRAINT supplied_grocery_pk PRIMARY KEY NONCLUSTERED,
+    product_id INT NOT NULL 
+        CONSTRAINT supplied_grocery_products_warehouse_id_fk
+        REFERENCES products_info.products_warehouse,
+    amount INT NOT NULL,
+    unit_price MONEY NOT NULL,
+    supplied_id INT 
+        CONSTRAINT supplied_grocery_supplies_id_fk 
+        REFERENCES suppliers_info.supplies
+)
+GO
+
+--add warehouse quantity
+CREATE TRIGGER increment_warehouse_quantity
+    ON grocery.suppliers_info.supplied_grocery
+    FOR INSERT
+    AS
+    DECLARE
+        @product_id INT,
+        @amount INT
+SET @product_id = (SELECT product_id
+                       FROM inserted)
+SET @amount = (SELECT amount
+               FROM inserted)
+BEGIN
+    UPDATE grocery.products_info.products_warehouse
+    SET quantity = (SELECT quantity FROM products_info.products_warehouse WHERE id = @product_id) +
+                   @amount
+    WHERE id = @product_id
+END
+GO
+
+INSERT INTO grocery.suppliers_info.supplied_grocery (id, product_id, amount, unit_price, supplied_id)
+VALUES (1, 1, 100, 35.00, 1)
+INSERT INTO grocery.suppliers_info.supplied_grocery (id, product_id, amount, unit_price, supplied_id)
+VALUES (2, 2, 50, 45.00, 2)
