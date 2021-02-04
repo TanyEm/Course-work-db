@@ -124,3 +124,108 @@ INSERT INTO grocery.suppliers_info.supplied_grocery (id, product_id, amount, uni
 VALUES (1, 1, 100, 35.00, 1)
 INSERT INTO grocery.suppliers_info.supplied_grocery (id, product_id, amount, unit_price, supplied_id)
 VALUES (2, 2, 50, 45.00, 2)
+
+-------------
+
+CREATE SCHEMA receipts
+GO
+
+CREATE TABLE receipts.receipt
+(
+    id INT NOT NULL PRIMARY KEY,
+    invoice MONEY NOT NULL,
+    data DATETIME NOT NULL,
+    employ_id   INT
+        CONSTRAINT orders_employees_id_fk 
+        REFERENCES employees_info.employee,
+    customer_id INT
+)
+GO
+
+INSERT INTO grocery.receipts.receipt (id, invoice, data, employ_id, customer_id)
+VALUES (1, 195.00, '2021-01-26 19:11:00.000', 1, 1);
+INSERT INTO grocery.receipts.receipt (id, invoice, data, employ_id, customer_id)
+VALUES (2, 320.00, '2021-01-27 13:19:00.000', 1, 2);
+INSERT INTO grocery.receipts.receipt (id, invoice, data, employ_id, customer_id)
+VALUES (3, 195.00, '2021-01-26 19:11:00.000', 1, 3);
+INSERT INTO grocery.receipts.receipt (id, invoice, data, employ_id, customer_id)
+VALUES (4, 320.00, '2021-01-27 13:19:00.000', 1, 4);
+
+------------------------------
+CREATE TABLE receipts.purchased_products
+(
+    id INT NOT NULL PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL
+        CONSTRAINT purchased_products_warehouse_id_fk
+        REFERENCES products_info.products_warehouse,
+    quantity INT NOT NULL,
+    customer_id INT
+)
+GO
+
+CREATE TRIGGER decrement_warehouse_quantity
+    ON grocery.receipts.purchased_products
+    FOR INSERT
+    AS
+    DECLARE
+        @product_id INT,
+        @quantity       INT
+SET @product_id = (SELECT product_id
+                       FROM inserted)
+SET @quantity = (SELECT quantity
+                 FROM inserted)
+BEGIN
+    UPDATE grocery.products_info.products_warehouse
+    SET quantity = ((SELECT quantity FROM products_info.products_warehouse WHERE id = @product_id) -
+                    @quantity)
+    WHERE id = @product_id
+END
+GO
+
+------------------------------
+
+
+CREATE TABLE receipts.groceries_in_internet_order
+(
+    id INT NOT NULL PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL
+        CONSTRAINT groceries_in_internet_order_products_warehouse_id_fk
+        REFERENCES products_info.products_warehouse,
+    quantity INT NOT NULL,
+    customer_id INT
+)
+GO
+
+CREATE TRIGGER decrement_warehouse_quantity_by_internet
+    ON grocery.receipts.groceries_in_internet_order
+    FOR INSERT
+    AS
+    DECLARE
+        @product_id INT,
+        @quantity       INT
+SET @product_id = (SELECT product_id
+                       FROM inserted)
+SET @quantity = (SELECT quantity
+                 FROM inserted)
+BEGIN
+    UPDATE grocery.products_info.products_warehouse
+    SET quantity = ((SELECT quantity FROM products_info.products_warehouse WHERE id = @product_id) -
+                    @quantity)
+    WHERE id = @product_id
+END
+GO
+
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (1, 1, 2, 13, 1)
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (2, 2, 1, 1,2)
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (3, 3, 2, 30,3)
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (4, 1, 2, 13,4)
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (5, 2, 1, 1,5)
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (6, 3, 2, 30, 6)
