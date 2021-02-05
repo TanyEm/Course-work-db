@@ -229,3 +229,43 @@ INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_
 VALUES (5, 2, 1, 1,5)
 INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
 VALUES (6, 3, 2, 30, 6)
+
+-------------
+CREATE VIEW receipts.avarage_invoice AS
+SELECT 
+    ord.id, 
+    ord.employ_id,
+    AVG(ord.invoice) as avrg_invoice 
+FROM (SELECT 
+        receipts.receipt.id, 
+        receipts.receipt.employ_id, 
+        receipts.receipt.invoice
+    FROM receipts.receipt 
+    INNER JOIN receipts.groceries_in_internet_order ON receipt.id = receipts.groceries_in_internet_order.customer_id) AS ord
+GROUP BY ord.id, ord.employ_id, ord.customer_id
+GO
+
+CREATE VIEW receipts.max_invoice AS
+SELECT 
+    ord.id, 
+    ord.employ_id,
+    ord.customer_id,
+    MAX(ord.invoice) as max_invoice 
+FROM (SELECT 
+        receipts.receipt.id, 
+        receipts.receipt.employ_id, 
+        receipts.receipt.customer_id,
+        receipts.receipt.invoice
+    FROM receipts.receipt 
+    INNER JOIN receipts.groceries_in_internet_order ON receipt.id = receipts.groceries_in_internet_order.customer_id) AS ord
+GROUP BY ord.id, ord.employ_id, ord.customer_id
+GO
+
+CREATE PROCEDURE employees_info.employ_sale_per_month @employ_id int, @month_count int
+AS
+SELECT SUM(invoice)
+FROM receipts.receipt
+WHERE employ_id = @employ_id
+  AND data >= dateadd(month, 0 - @month_count, getdate())
+    RETURN;
+------------------
