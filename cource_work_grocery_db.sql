@@ -269,3 +269,22 @@ WHERE employ_id = @employ_id
   AND data >= dateadd(month, 0 - @month_count, getdate())
     RETURN;
 ------------------
+--check view
+SELECT * FROM receipts.max_invoice;
+
+INSERT INTO grocery.receipts.receipt (id, invoice, data, employ_id, customer_id)
+VALUES (9, 3020.00, GETDATE(), 1, 9);
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (9, 4, 1, 4, 9)
+
+
+SELECT * FROM receipts.max_invoice;
+
+SELECT * FROM consumer_information.avarage_invoice;
+
+INSERT INTO grocery.order_info.orders(id, consumer_id, invoice, employ_id)
+VALUES (7, 1, 1, 1);
+INSERT INTO grocery.order_info.grocerys_in_orders (id, order_id, product_id, quantity)
+VALUES (13, 4, 2, 2);
+
+SELECT * FROM consumer_information.avarage_invoice;
