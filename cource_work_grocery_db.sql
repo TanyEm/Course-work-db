@@ -288,3 +288,23 @@ INSERT INTO grocery.order_info.grocerys_in_orders (id, order_id, product_id, qua
 VALUES (13, 4, 2, 2);
 
 SELECT * FROM consumer_information.avarage_invoice;
+
+-- check increment
+SELECT quantity FROM products_info.products_warehouse WHERE id = 2;
+
+INSERT INTO grocery.suppliers_info.supplies (id, provider, date, employ_id)
+VALUES (9, 'Tomato OAO', GETDATE(), 1);
+INSERT INTO grocery.suppliers_info.supplied_grocery (id, product_id, amount, unit_price, supplied_id)
+VALUES (7, 2, 17, 45.00, 9);
+
+SELECT quantity FROM products_info.products_warehouse WHERE id = 2;
+
+-- check decrement
+SELECT quantity FROM products_info.products_warehouse WHERE id = 2;
+
+INSERT INTO grocery.receipts.receipt (id, invoice, data, employ_id, customer_id)
+VALUES (6, 1320.00, GETDATE(), 1, 5);
+INSERT INTO grocery.receipts.purchased_products (id, order_id, product_id, quantity, customer_id)
+VALUES (7, 3, 2, 2, 7)
+
+SELECT quantity FROM products_info.products_warehouse WHERE id = 2;
