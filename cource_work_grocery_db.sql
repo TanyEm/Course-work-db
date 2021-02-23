@@ -318,3 +318,11 @@ INSERT INTO grocery.suppliers_info.supplied_grocery (id, product_id, amount, uni
 VALUES (7, 2, 17, 45.00, 9);
 
 SELECT quantity FROM products_info.products_warehouse WHERE id = 2;
+
+--с сайта decrement
+SELECT quantity FROM products_info.products_warehouse WHERE id = 1;
+
+INSERT INTO grocery.receipts.receipt (id, invoice, data, employ_id, customer_id)
+VALUES (7, 1320.00, GETDATE(), 1, 6);
+INSERT INTO grocery.receipts.groceries_in_internet_order (id, order_id, product_id, quantity, customer_id)
+VALUES (7, 4, 1, 4, 7)
